@@ -54,9 +54,9 @@ class UserCFRec:
         :return:
         '''
         print("开始计算用户之间的相似度...")
-        if os.path.exists('../data/ml-1m/user_sim.json'):
+        if os.path.exists('./data/user_sim.json'):
             print('用户相似度从文件中加载...')
-            userSim = json.load(open('../data/ml-1m/user_sim.json', 'r'))
+            userSim = json.load(open('./data/user_sim.json', 'r'))
         else:
             # 得到每个item被哪些user评价过
             item_users = dict()
@@ -79,7 +79,8 @@ class UserCFRec:
                         count[u].setdefault(v, 0)   # 在同一个商品下  两个用户
                         if u == v:
                             continue
-                        count[u][v] += 1/math.log(1 + len(users))   # 如果连个用户经常出现在同一个物品下  那可能权重就高了
+                        # 下面这一步  相对应的是对热门商品进行了权重惩罚  热评数越多 权重越小
+                        count[u][v] += 1/math.log(1 + len(users))   # 如果两个用户经常出现在同一个物品下  那可能权重就高了
 
             # 构建相似度矩阵
             userSim = dict()
@@ -90,25 +91,52 @@ class UserCFRec:
                         continue
                     userSim[u].setdefault(v, 0.0)
                     userSim[u][v] = cuv / math.sqrt(user_item_count[u] * user_item_count[v])
-            json.dump(userSim, open('../data/ml-1m/user_sim.json', 'w'))
+            json.dump(userSim, open('./data/user_sim.json', 'w'))
         return userSim
 
     def recommend(self, user, k=8, nitems=40):
         result = dict()
         have_score_items = self.trainData.get(user, {})
         for v, wuv in sorted(self.users_sim[user].items(), key=lambda x: x[1], reverse=True)[0:k]:
-            for i, rvi in self.trainData[v].items():
+            for i, rvi in self.trainData[v].items():    # 相关用户对商品的打分
                 if i in have_score_items:
                     continue
                 result.setdefault(i, 0)
                 result[i] += wuv * rvi
         return dict(sorted(result.items(), key=lambda x: x[1], reverse=True)[0: nitems])
 
+    def precision(self, k=8, nitems=10):
+        print('开始计算准确率...')
+        hit = 0
+        precision = 0
+        for user in self.trainData.keys():
+            tu = self.testData.get(user, {})
+            rank = self.recommend(user, k=k, nitems=nitems)
+            for item, rate in rank.items():
+                if item in tu:
+                    hit += 1
+            precision += nitems
+        return hit / (precision * 1.0)
+
 
 if __name__ == '__main__':
-    cf = UserCFRec('../data/ml-1m/ratings.dat')
+    cf = UserCFRec('./data/ratings.dat')
     result = cf.recommend('1')   # 给1用户推荐电影
     print(result)
+
+    precision = cf.precision()
+    print('推荐的命中率:', precision)
+
+
+
+
+
+
+
+
+
+
+
 
 
 
