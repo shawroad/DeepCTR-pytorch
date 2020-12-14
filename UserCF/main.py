@@ -18,8 +18,6 @@ class UserCFRec:
         self.data = self.loadData()    # 加载数据
         self.trainData, self.testData = self.splitData(3, 47)
         self.users_sim = self.UserSimilarityBest()
-        print(self.users_sim)
-        exit()
 
     def loadData(self):
         # 加载评分数据到data
