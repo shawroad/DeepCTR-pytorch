@@ -33,7 +33,7 @@ class DCN(nn.Module):
                  emb_size=8,
                  hidden_dims=[256, 128],
                  dropout=[0.2, 0.2],
-                 num_layer=3):
+                 num_layer=2):
         '''
         :param cate_fea_uniques:
         :param num_fea_size: 数字特征  也就是连续特征
@@ -45,7 +45,7 @@ class DCN(nn.Module):
         super(DCN, self).__init__()
         self.cate_fea_size = len(cate_fea_uniques)
         self.num_fea_size = num_fea_size
-        self.num_layers = 3
+        self.num_layers = num_layers
 
         # sparse特征嵌入
         self.sparse_embedding = nn.ModuleList([
