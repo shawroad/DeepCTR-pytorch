@@ -1,0 +1,15 @@
+'age' -> '年龄'
+'workclass' -> '工作类别'
+'fnlwgt' -> '最终权重'（通常指样本权重，用于反映样本在总体中的代表性）
+'education' -> '教育程度'
+'education_num' -> '教育年限'
+'marital_status' -> '婚姻状况'
+'occupation' -> '职业'
+'relationship' -> '关系'（通常指家庭关系，如是否为户主）
+'race' -> '种族'
+'sex' -> '性别'
+'capital_gain' -> '资本收益'
+'capital_loss' -> '资本损失'
+'hours_per_week' -> '每周工作小时数'
+'native_country' -> '出生国家'
+'income_50k' -> '收入是否超过50K'（通常是一个二分类变量，表示收入是否超过50,000美元）
